@@ -1,0 +1,27 @@
+Up-to-date list of benchmark tests.
+
+README file prepared by Arek Bochinski4744
+
+Original version is version 0.2 cloned from github.
+Tested using ab with 100 concurrent clients making 10000 requests to the plain helloworld demo application.
+
+October 21, 2009
+1.httpheader parse C extension
+2.content length calculation
+================================
+Tornado - original:
+4351
+4406
+4452
+4455
+4509
+
+Tornado - opt
+4744
+4754
+4796
+4822
+4828
+
+Average improvement: 7% - 10%
+
