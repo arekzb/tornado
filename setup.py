@@ -24,6 +24,11 @@ python_26 = (major > 2 or (major == 2 and minor >= 6))
 if "linux" in sys.platform.lower() and not python_26:
     extensions.append(distutils.core.Extension(
         "tornado.epoll", ["tornado/epoll.c"]))
+else:
+  print "Not building epoll"
+  
+if "linux" in sys.platform.lower():
+  extensions.append(distutils.core.Extension("tornado.httpheader", ["tornado/httpheader.c"]))
 
 distutils.core.setup(
     name="tornado",

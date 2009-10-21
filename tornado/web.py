@@ -67,7 +67,7 @@ import types
 import urllib
 import urlparse
 import uuid
-
+import httpheader
 
 class RequestHandler(object):
     """Subclass this class and define get() or post() to make a handler.
@@ -128,6 +128,7 @@ class RequestHandler(object):
             if self.request.headers.get("Connection") == "Keep-Alive":
                 self.set_header("Connection", "Keep-Alive")
         self._write_buffer = []
+        self._content_length = 0
         self._status_code = 200
 
     def set_status(self, status_code):
@@ -295,6 +296,7 @@ class RequestHandler(object):
             self.set_header("Content-Type", "text/javascript; charset=UTF-8")
         chunk = _utf8(chunk)
         self._write_buffer.append(chunk)
+        self._content_length+=len(chunk)
 
     def render(self, template_name, **kwargs):
         """Renders the template with the given arguments as the response."""
@@ -452,8 +454,7 @@ class RequestHandler(object):
                 else:
                     self.set_header("Etag", etag)
             if "Content-Length" not in self._headers:
-                content_length = sum(len(part) for part in self._write_buffer)
-                self.set_header("Content-Length", content_length)
+                self.set_header("Content-Length", self._content_length)
 
         if not self.application._wsgi:
             self.flush(include_footers=True)
@@ -689,7 +690,7 @@ class RequestHandler(object):
                 if self._auto_finish and not self._finished:
                     self.finish()
         except Exception, e:
-            self._handle_request_exception(e)
+            self._handle_request_exception(e) 
 
     def _generate_headers(self):
         for transform in self._transforms:
@@ -710,8 +711,7 @@ class RequestHandler(object):
         else:
             log_method = logging.error
         request_time = 1000.0 * self.request.request_time()
-        log_method("%d %s %.2fms", self._status_code,
-                   self._request_summary(), request_time)
+        #log_method("%d %s %.2fms", self._status_code,self._request_summary(), request_time)
 
     def _request_summary(self):
         return self.request.method + " " + self.request.uri + " (" + \

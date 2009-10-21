@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2009 Facebook
+# Copyright 2009 Facebook 
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -26,6 +26,7 @@ import logging
 import socket
 import time
 import urlparse
+import httpheader
 
 try:
     import ssl # Python 2.6+
@@ -74,7 +75,7 @@ class HTTPServer(object):
 
     HTTPServer can serve HTTPS (SSL) traffic with Python 2.6+ and OpenSSL.
     To make this server serve SSL traffic, send the ssl_options dictionary
-    argument with the arguments required for the ssl.wrap_socket() method,
+argument with the arguments required for the ssl.wrap_socket() method,
     including "certfile" and "keyfile":
 
        HTTPServer(applicaton, ssl_options={
@@ -141,6 +142,7 @@ class HTTPConnection(object):
         self._request = None
         self._request_finished = False
         self.stream.read_until("\r\n\r\n", self._on_headers)
+
 
     def write(self, chunk):
         assert self._request, "Request closed"
@@ -343,9 +345,5 @@ class HTTPHeaders(dict):
 
     @classmethod
     def parse(cls, headers_string):
-        headers = cls()
-        for line in headers_string.splitlines():
-            if line:
-                name, value = line.split(": ", 1)
-                headers[name] = value
+        headers = httpheader.httpheader_parse(headers_string)
         return headers
