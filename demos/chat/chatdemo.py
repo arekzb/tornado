@@ -17,7 +17,6 @@
 import logging
 import tornado.auth
 import tornado.escape
-import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
@@ -131,7 +130,7 @@ class AuthLoginHandler(BaseHandler, tornado.auth.GoogleMixin):
             self.get_authenticated_user(self.async_callback(self._on_auth))
             return
         self.authenticate_redirect(ax_attrs=["name"])
-    
+
     def _on_auth(self, user):
         if not user:
             raise tornado.web.HTTPError(500, "Google auth failed")
@@ -147,8 +146,8 @@ class AuthLogoutHandler(BaseHandler):
 
 def main():
     tornado.options.parse_command_line()
-    http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
+    app = Application()
+    app.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 
 
