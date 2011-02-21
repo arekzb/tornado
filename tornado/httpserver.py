@@ -23,7 +23,6 @@ import os
 import socket
 import time
 import urlparse
-import httpheader
 
 from tornado import httputil
 from tornado import ioloop
